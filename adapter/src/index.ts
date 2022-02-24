@@ -3,6 +3,7 @@ import { Server } from 'http';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import { AdapterEndpoint } from './api/rest/adapterEndpoint';
 
 export const port = 8080;
 const API_VERSION = '0.0.1';
@@ -20,10 +21,8 @@ async function main(): Promise<void> {
     res.status(200).send('I am alive!');
   });
 
-  app.get('/version', (req: express.Request, res: express.Response): void => {
-    res.header('Content-Type', 'text/plain');
-    res.status(200).send(API_VERSION);
-  });
+  const adapterEndpoint = new AdapterEndpoint();
+  adapterEndpoint.registerRoutes(app);
 
   server = app.listen(port, () => {
     console.log(`Listening on port ${port}`);
