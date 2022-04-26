@@ -1,38 +1,38 @@
-import {Interpreter} from "./Interpreter";
-import { InterpreterParameterDescription } from "./InterpreterParameterDescription";
-const xml2js = require('xml2js');
+import { XMLParser } from 'fast-xml-parser';
 
-export class XmlInterpreter extends Interpreter{
+import { Interpreter } from './Interpreter';
+import { InterpreterParameterDescription } from './InterpreterParameterDescription';
 
-  type: string = "XML"
-  description: string = "Interpret data as XML data"
-  parameters: InterpreterParameterDescription[] = []
+export class XmlInterpreter extends Interpreter {
+  type = 'XML';
+  description = 'Interpret data as XML data';
+  parameters: InterpreterParameterDescription[] = [];
 
   override getType(): string {
-    return this.type
+    return this.type;
   }
 
   override getDescription(): string {
-    return this.description
+    return this.description;
   }
 
   override getAvailableParameters(): InterpreterParameterDescription[] {
     return this.parameters;
   }
 
-  // TODO @Georg check if this package can be used..
-  override doInterpret(data: string, parameters: Record<string, unknown>): Promise<string> {
-    const parser = new xml2js.Parser({explicitArray: false});
-     
-    return parser.parseStringPromise(data).then(function (result:any) {
-       // `result` is a JavaScript object
-      // convert it to a JSON string
-      return result.root
-      //const json = JSON.stringify(result.root);
-      //return json;
-    })
-    .catch(function (err:any) {
-      throw err
-    }); 
+  override doInterpret(
+    data: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    parameters: Record<string, unknown>,
+  ): Promise<string> {
+    const options = {
+      ignoreDeclaration: true,
+    };
+
+    const parser = new XMLParser(options);
+    const result = parser.parse(data) as Record<string, unknown>;
+    return new Promise(function (resolve) {
+      resolve(JSON.stringify(result));
+    });
   }
 }

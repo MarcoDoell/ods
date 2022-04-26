@@ -1,71 +1,82 @@
-import { ImporterParameterDescription } from "./ImporterParameterDescription";
-import { ImporterParameterError } from "../model/exceptions/ImporterParameterError";
-import { generateKeySync } from "crypto";
+import { ImporterParameterError } from '../model/exceptions/ImporterParameterError';
+
+import { ImporterParameterDescription } from './ImporterParameterDescription';
 
 export abstract class Importer {
   type: string | undefined;
   description: string | undefined;
 
   getRequiredParameters(): Array<ImporterParameterDescription> {
-    return this.getAvailableParameters().filter((item: any) => item.required) as Array<ImporterParameterDescription>
+    return this.getAvailableParameters().filter(
+      (item: ImporterParameterDescription) => item.required,
+    );
   }
 
-  //@JsonProperty("parameters")
-  abstract getAvailableParameters() :Array<ImporterParameterDescription>;
+  abstract getAvailableParameters(): Array<ImporterParameterDescription>;
 
-  async fetch(parameters:Record<string, unknown> ): Promise<string> { //throws ImporterParameterException
-      this.validateParameters(parameters);
-      const x = await this.doFetch(parameters);
-      return x;
-      //return JSON.stringify(x);
+  async fetch(parameters: Record<string, unknown>): Promise<string> {
+    this.validateParameters(parameters);
+    const x = await this.doFetch(parameters);
+    return x;
   }
 
   abstract getType(): string;
   abstract getDescription(): string;
 
-  abstract doFetch(parameters: Record<string, unknown>): Promise<string>; //throws ImporterParameterException
+  abstract doFetch(parameters: Record<string, unknown>): Promise<string>;
 
-  validateParameters(inputParameters: Record<string, unknown>) { //throws ImporterParameterException;
+  validateParameters(inputParameters: Record<string, unknown>): void {
+    let illegalArguments = false;
+    let illegalArgumentsMessage = '';
 
-    let illegalArguments: boolean = false;
-    let illegalArgumentsMessage: string = "";
+    const possibleParameters: Array<ImporterParameterDescription> =
+      this.getAvailableParameters();
 
-    const possibleParameters: Array<ImporterParameterDescription> = this.getAvailableParameters();
-
-    let unnecessaryArguments = [];
-    const names = possibleParameters.map(a => a.name);
+    const unnecessaryArguments = [];
+    const names = possibleParameters.map((a) => a.name);
     const keys = Object.keys(inputParameters);
 
     for (const entry of keys) {
-      if(!names.includes(entry)) {
+      if (!names.includes(entry)) {
         unnecessaryArguments.push(entry);
       }
     }
 
-    if(unnecessaryArguments.length > 0){
+    if (unnecessaryArguments.length > 0) {
       illegalArguments = true;
-      for(const argument of unnecessaryArguments){
-        illegalArgumentsMessage += argument + " is not needed by importer \n"
+      for (const argument of unnecessaryArguments) {
+        illegalArgumentsMessage += argument + ' is not needed by importer \n';
       }
     }
-    const requiredParameters = this.getRequiredParameters()
-    for (const requiredParameter of requiredParameters){
-      // TODO is that OK?
-      const checkType = (inputParameters[requiredParameter.name] as any).constructor.name
-      if (inputParameters[requiredParameter.name] == null){
+
+    const requiredParameters = this.getRequiredParameters();
+    for (const requiredParameter of requiredParameters) {
+      const param = inputParameters[
+        requiredParameter.name
+      ] as ImporterParameterDescription;
+
+      if (param === undefined) {
         illegalArguments = true;
-        illegalArgumentsMessage = illegalArgumentsMessage + this.type + "importer requires parameter " + requiredParameter.name + "\n";
+        illegalArgumentsMessage += this.type;
+        illegalArgumentsMessage += 'importer requires parameter ';
+        illegalArgumentsMessage += requiredParameter.name;
+        illegalArgumentsMessage += '\n';
+        break;
       }
-      
-      else if(checkType.toLowerCase() != requiredParameter.type){
+      const checkType = param.constructor.name;
+      if (checkType.toLowerCase() !== requiredParameter.type) {
         illegalArguments = true;
-        illegalArgumentsMessage = illegalArgumentsMessage + this.type + " importer requires parameter "
-            + requiredParameter.name + " to be type " + (requiredParameter.type as string) + "\n";
+        illegalArgumentsMessage += this.type;
+        illegalArgumentsMessage += ' importer requires parameter ';
+        illegalArgumentsMessage += requiredParameter.name;
+        illegalArgumentsMessage += ' to be type ';
+        illegalArgumentsMessage += requiredParameter.type;
+        illegalArgumentsMessage += '\n';
+        break;
       }
     }
-    if(illegalArguments){
+    if (illegalArguments) {
       throw new ImporterParameterError(illegalArgumentsMessage);
     }
-    
   }
 }
