@@ -70,8 +70,8 @@ services:
       - '-cmax_wal_senders=1'
       - '-cmax_replication_slots=1'
     # Uncomment if you want to access to adapter-db from outside the docker environment
-    # ports:
-    #   - 5432:5432
+    ports:
+      - 5432:5432
 
   adapter-outboxer:
     image: ghcr.io/jvalue/outboxer-postgres2rabbitmq
@@ -358,8 +358,10 @@ services:
       POSTGRES_USER: 'notification_usr'
       POSTGRES_PASSWORD: 'admin'
       POSTGRES_DB: 'ods-notifications'
+    ports:
+      - 5433:5432
 
-# -------------------- EDGE SERVER (PORT 9000) -----------------------------
+  # -------------------- EDGE SERVER (PORT 9000) -----------------------------
   edge:
     image: traefik:2.3
     command:

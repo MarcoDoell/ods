@@ -5,6 +5,7 @@
 version: "3.7"
 
 services:
+
   # ----------------- ADAPTER SERVICE   (PORTS 9000 - 9099) --------------------
   adapter-it:
     image: open-data-service/ods-main/adapter-it

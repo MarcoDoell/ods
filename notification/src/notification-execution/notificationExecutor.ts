@@ -18,8 +18,8 @@ import App = firebase.app.App;
 
 const VERSION = '0.0.1';
 
-const SLACK_BASE_URL =
-  process.env.SLACK_BASE_URL ?? 'https://hooks.slack.com/services';
+const SLACK_BASE_URL = 'https://hooks.slack.com/services';
+  // process.env.SLACK_BASE_URL ?? '
 
 export default class NotificationExecutor {
   executor: SandboxExecutor;

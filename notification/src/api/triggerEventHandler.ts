@@ -7,8 +7,8 @@ import {
   isValidPipelineSuccessEvent,
 } from './pipelineEvent';
 
-const NOTIFICATION_DATA_LOCATION_URL =
-  process.env.NOTIFICATION_DATA_LOCATION_URL ?? 'localhost:9000/storage';
+const NOTIFICATION_DATA_LOCATION_URL = 'localhost:9000/storage';
+  // process.env.NOTIFICATION_DATA_LOCATION_URL ??
 
 export class TriggerEventHandler {
   notificationRepository: NotificationRepository;

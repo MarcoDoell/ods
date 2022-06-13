@@ -12,7 +12,7 @@ import { initNotificationRepository } from './notification-config/postgresNotifi
 import VM2SandboxExecutor from './notification-execution/condition-evaluation/vm2SandboxExecutor';
 import NotificationExecutor from './notification-execution/notificationExecutor';
 
-const port = 8080;
+const port = 8090;
 
 function onAmqpConnectionLoss(error: unknown): never {
   console.log('Terminating because connection to AMQP lost:', error);
