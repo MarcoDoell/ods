@@ -46,6 +46,7 @@ export const CONNECTION_BACKOFF = 2000;
 export const POSTGRES_HOST = 'localhost'; // "adapter-db" //localhost for local
 export const POSTGRES_PORT = '5432';
 export const POSTGRES_PW = 'admin';
+export const POSTGRES_SSL= 'false';
 export const POSTGRES_USER = 'adapterservice';
 export const POSTGRES_DB = 'adapterservice';
 export const AMQP_URL = 'amqp://rabbit_adm:R4bb!7_4DM_p4SS@localhost:5672';

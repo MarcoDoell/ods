@@ -141,6 +141,8 @@ services:
       - '-cwal_level=logical'
       - '-cmax_wal_senders=1'
       - '-cmax_replication_slots=1'
+    ports:
+      - 5435:5432
 
   scheduler-outboxer:
     image: ghcr.io/jvalue/outboxer-postgres2rabbitmq
@@ -299,7 +301,8 @@ services:
       - '-cwal_level=logical'
       - '-cmax_wal_senders=1'
       - '-cmax_replication_slots=1'
-
+    ports:
+      - 5434:5432
   pipeline-outboxer:
     image: ghcr.io/jvalue/outboxer-postgres2rabbitmq
     environment:

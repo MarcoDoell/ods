@@ -3,7 +3,7 @@ import { PostgresClient } from '@jvalue/node-dry-pg';
 import { mocked } from 'ts-jest/utils';
 
 import PipelineExecutor from '../pipeline-execution/pipelineExecutor';
-import VM2SandboxExecutor from '../pipeline-execution/sandbox/vm2SandboxExecutor';
+import SecondVM2SandboxExecutor from '../pipeline-execution/sandbox/secondVM2SandboxExecutor';
 
 import JsonSchemaValidator from './../pipeline-validator/jsonSchemaValidator';
 import { PipelineConfig, PipelineConfigDTO } from './model/pipelineConfig';
@@ -115,7 +115,7 @@ test('Should call create and publish event', async () => {
 
   const manager = new PipelineConfigManager(
     postgresClient,
-    new PipelineExecutor(new VM2SandboxExecutor()),
+    new PipelineExecutor(new SecondVM2SandboxExecutor()),
     new PipelineTransformedDataManager(postgresClient),
     new JsonSchemaValidator(),
   );
@@ -133,7 +133,7 @@ test('Should call update and publish event', async () => {
 
   const manager = new PipelineConfigManager(
     postgresClient,
-    new PipelineExecutor(new VM2SandboxExecutor()),
+    new PipelineExecutor(new SecondVM2SandboxExecutor()),
     new PipelineTransformedDataManager(postgresClient),
     new JsonSchemaValidator(),
   );
@@ -150,7 +150,7 @@ test('Should call update and publish event', async () => {
 test('Should call delete and publish event', async () => {
   const manager = new PipelineConfigManager(
     postgresClient,
-    new PipelineExecutor(new VM2SandboxExecutor()),
+    new PipelineExecutor(new SecondVM2SandboxExecutor()),
     new PipelineTransformedDataManager(postgresClient),
     new JsonSchemaValidator(),
   );
@@ -166,7 +166,7 @@ test('Should call delete and publish event', async () => {
 test('Should call delete all and publish event', async () => {
   const manager = new PipelineConfigManager(
     postgresClient,
-    new PipelineExecutor(new VM2SandboxExecutor()),
+    new PipelineExecutor(new SecondVM2SandboxExecutor()),
     new PipelineTransformedDataManager(postgresClient),
     new JsonSchemaValidator(),
   );

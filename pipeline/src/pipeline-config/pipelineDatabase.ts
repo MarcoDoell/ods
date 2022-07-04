@@ -20,7 +20,7 @@ const POOL_CONFIG: PoolConfig = {
   user: POSTGRES_USER,
   password: POSTGRES_PW,
   database: POSTGRES_DB,
-  ssl: POSTGRES_SSL ? { rejectUnauthorized: false } : false,
+  ssl: false,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
@@ -30,6 +30,7 @@ export async function init(
   retries: number,
   backoffMs: number,
 ): Promise<PostgresClient> {
+  console.log(POOL_CONFIG)
   const postgresClient = new PostgresClient(POOL_CONFIG);
   await postgresClient.waitForConnection(retries, backoffMs);
   await postgresClient.transaction(async (client) => {

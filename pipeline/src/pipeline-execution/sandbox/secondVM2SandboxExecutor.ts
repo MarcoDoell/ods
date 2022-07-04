@@ -6,7 +6,7 @@ import { convertRuntimeError, convertSyntaxError } from './vm2StacktraceParser';
 
 const FUNCTION_WRAP_PREFIX_LENGTH = 1;
 
-export default class VM2SandboxExecutor implements SandboxExecutor {
+export default class SecondVM2SandboxExecutor implements SandboxExecutor {
   vm: VM;
 
   constructor(timeout = 5000) {

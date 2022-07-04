@@ -1,13 +1,13 @@
 /* eslint-env jest */
 import { ExecutionResult } from './executionResult';
 import SandboxExecutor from './sandboxExecutor';
-import VM2SandboxExecutor from './vm2SandboxExecutor';
+import SecondVM2SandboxExecutor from './secondVM2SandboxExecutor';
 
 describe('VM2SandboxExecutor', () => {
   let e: SandboxExecutor;
 
   beforeEach(() => {
-    e = new VM2SandboxExecutor(1000);
+    e = new SecondVM2SandboxExecutor(1000);
   });
 
   const expectSuccessfulResult = (

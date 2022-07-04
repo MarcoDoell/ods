@@ -14,7 +14,7 @@ import { PipelineConfigManager } from './pipeline-config/pipelineConfigManager';
 import { init as initDatabase } from './pipeline-config/pipelineDatabase';
 import { PipelineTransformedDataManager } from './pipeline-config/pipelineTransformedDataManager';
 import PipelineExecutor from './pipeline-execution/pipelineExecutor';
-import VM2SandboxExecutor from './pipeline-execution/sandbox/vm2SandboxExecutor';
+import SecondVM2SandboxExecutor from './pipeline-execution/sandbox/secondVM2SandboxExecutor';
 import JsonSchemaValidator from './pipeline-validator/jsonSchemaValidator';
 
 export const port = 8080;
@@ -31,7 +31,7 @@ process.on('SIGTERM', () => {
 });
 
 async function main(): Promise<void> {
-  const sandboxExecutor = new VM2SandboxExecutor();
+  const sandboxExecutor = new SecondVM2SandboxExecutor();
   const pipelineExecutor = new PipelineExecutor(sandboxExecutor);
 
   const postgresClient = await initDatabase(

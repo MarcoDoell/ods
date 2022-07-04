@@ -18,7 +18,7 @@ const POOL_CONFIG: PoolConfig = {
   user: POSTGRES_USER,
   password: POSTGRES_PW,
   database: POSTGRES_DB,
-  ssl: POSTGRES_SSL ? { rejectUnauthorized: false } : false,
+  ssl:  false,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
