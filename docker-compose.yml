@@ -234,8 +234,8 @@ services:
   # Uncomment this if you want to manage the Postgres databases with adminer
   # adminer: # management UI for Postgres
   #   image: adminer
-  #   ports:
-  #     - 8081:8080
+    ports:
+      - 5436:5432
 
   storage-db-liquibase: # perform database migration on start up
     image: ${DOCKER_REGISTRY}/storage-db-liquibase
@@ -250,6 +250,8 @@ services:
       CONNECTION_BACKOFF_IN_SECONDS: 2
     depends_on:
       - storage-db
+    ports:
+      - 5437:5432
 
   # ----------------- PIPELINE SERVICE (/pipelines) --------------------
   pipeline:

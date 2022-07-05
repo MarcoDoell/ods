@@ -71,8 +71,8 @@ export default class Scheduler {
     this.cancelJob(datasourceId);
 
     const executionDate: Date = this.determineExecutionDate(datasourceConfig);
-    console.log(`datasource ${datasourceId} with consecutive pipelines scheduled
-      for next execution at ${executionDate.toLocaleString()}.`);
+    //console.log(`datasource ${datasourceId} with consecutive pipelines scheduled
+    //  for next execution at ${executionDate.toLocaleString()}.`);
 
     const scheduledJob = schedule.scheduleJob(
       `Datasource ${datasourceId}`,

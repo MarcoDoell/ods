@@ -1,61 +1,61 @@
-const { execPath } = require('process');
-const request = require('supertest');
+const { execPath } = require('process')
+const request = require('supertest')
 
-const { ADAPTER_URL, MOCK_SERVER_URL } = require('./env');
-const { waitForServicesToBeReady } = require('./waitForServices');
+const { ADAPTER_URL, MOCK_SERVER_URL } = require('./env')
+const { waitForServicesToBeReady } = require('./waitForServices')
 
-const TIMEOUT = 10000;
+const TIMEOUT = 10000
 
 describe('Stateless data import', () => {
   beforeAll(async () => {
-    await waitForServicesToBeReady();
-  }, 60000);
+    await waitForServicesToBeReady()
+  }, 60000)
 
   test(
     'Should respond with semantic version [GET /version]',
     async () => {
-      const response = await request(ADAPTER_URL).get('/version');
-      expect(response.status).toEqual(200);
-      expect(response.type).toEqual('text/plain');
+      const response = await request(ADAPTER_URL).get('/version')
+      expect(response.status).toEqual(200)
+      expect(response.type).toEqual('text/plain')
 
       const semanticVersionRegEx =
-        '^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)';
-      expect(response.text).toMatch(new RegExp(semanticVersionRegEx));
+        '^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)'
+      expect(response.text).toMatch(new RegExp(semanticVersionRegEx))
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should respond with all available formats [GET /formats]',
     async () => {
-      const response = await request(ADAPTER_URL).get('/formats');
-      expect(response.status).toEqual(200);
-      expect(response.type).toEqual('application/json');
-      expect(response.body.length).toBeGreaterThanOrEqual(2);
+      const response = await request(ADAPTER_URL).get('/formats')
+      expect(response.status).toEqual(200)
+      expect(response.type).toEqual('application/json')
+      expect(response.body.length).toBeGreaterThanOrEqual(2)
 
       response.body.forEach((e) => {
-        expect(e.type).toBeDefined();
-        expect(e.parameters).toBeDefined();
-      });
+        expect(e.type).toBeDefined()
+        expect(e.parameters).toBeDefined()
+      })
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should respond with all available protocols [GET /protocols]',
     async () => {
-      const response = await request(ADAPTER_URL).get('/protocols');
-      expect(response.status).toEqual(200);
-      expect(response.type).toEqual('application/json');
-      expect(response.body.length).toBeGreaterThanOrEqual(1);
+      const response = await request(ADAPTER_URL).get('/protocols')
+      expect(response.status).toEqual(200)
+      expect(response.type).toEqual('application/json')
+      expect(response.body.length).toBeGreaterThanOrEqual(1)
 
       response.body.forEach((e) => {
-        expect(e.type).toBeDefined();
-        expect(e.parameters).toBeDefined();
-      });
+        expect(e.type).toBeDefined()
+        expect(e.parameters).toBeDefined()
+      })
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should import json data',
@@ -65,26 +65,26 @@ describe('Stateless data import', () => {
           type: 'HTTP',
           parameters: {
             location: MOCK_SERVER_URL + '/json',
-            encoding: 'UTF-8',
-          },
+            encoding: 'UTF-8'
+          }
         },
         format: {
-          type: 'JSON',
-        },
-      };
+          type: 'JSON'
+        }
+      }
 
       const response = await request(ADAPTER_URL)
         .post('/preview')
-        .send(reqBody);
-      expect(response.status).toEqual(200);
-      const importedData = response.body.data;
+        .send(reqBody)
+      expect(response.status).toEqual(200)
+      const importedData = response.body.data
       expect(importedData).toEqual({
         whateverwillbe: 'willbe',
-        quesera: 'sera',
-      });
+        quesera: 'sera'
+      })
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should import raw xml data',
@@ -94,23 +94,23 @@ describe('Stateless data import', () => {
           type: 'HTTP',
           parameters: {
             location: MOCK_SERVER_URL + '/xml',
-            encoding: 'UTF-8',
-          },
-        },
-      };
+            encoding: 'UTF-8'
+          }
+        }
+      }
 
       const response = await request(ADAPTER_URL)
         .post('/preview/raw')
-        .send(reqBody);
+        .send(reqBody)
 
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual(200)
       expect(response.body.data).toEqual(
         '<?xml version="1.0" encoding="UTF-8"?>' +
-          '<root><from>Rick</from><to>Morty</to></root>',
-      );
+          '<root><from>Rick</from><to>Morty</to></root>'
+      )
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should import and format xml data',
@@ -120,25 +120,25 @@ describe('Stateless data import', () => {
           type: 'HTTP',
           parameters: {
             location: MOCK_SERVER_URL + '/xml',
-            encoding: 'UTF-8',
-          },
+            encoding: 'UTF-8'
+          }
         },
         format: {
-          type: 'XML',
-        },
-      };
+          type: 'XML'
+        }
+      }
 
       const response = await request(ADAPTER_URL)
         .post('/preview')
-        .send(reqBody);
-      expect(response.status).toEqual(200);
-      const importedData = response.body.data;
+        .send(reqBody)
+      expect(response.status).toEqual(200)
+      const importedData = response.body.data
       expect(JSON.parse(importedData)).toEqual({
-        root: { from: 'Rick', to: 'Morty' },
-      });
+        root: { from: 'Rick', to: 'Morty' }
+      })
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should import and format more xml data',
@@ -148,29 +148,29 @@ describe('Stateless data import', () => {
           type: 'HTTP',
           parameters: {
             location: MOCK_SERVER_URL + '/xmlbigger',
-            encoding: 'UTF-8',
-          },
+            encoding: 'UTF-8'
+          }
         },
         format: {
-          type: 'XML',
-        },
-      };
+          type: 'XML'
+        }
+      }
 
       const response = await request(ADAPTER_URL)
         .post('/preview')
-        .send(reqBody);
-      expect(response.status).toEqual(200);
-      const importedData = response.body.data;
+        .send(reqBody)
+      expect(response.status).toEqual(200)
+      const importedData = response.body.data
       expect(JSON.parse(importedData)).toEqual({
         root: {
           from: 'Rick',
           to: 'Morty',
-          test: { hello: 'hello', servus: 'servus' },
-        },
-      });
+          test: { hello: 'hello', servus: 'servus' }
+        }
+      })
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should import and format csv data',
@@ -180,8 +180,8 @@ describe('Stateless data import', () => {
           type: 'HTTP',
           parameters: {
             location: MOCK_SERVER_URL + '/csv',
-            encoding: 'UTF-8',
-          },
+            encoding: 'UTF-8'
+          }
         },
         format: {
           type: 'CSV',
@@ -189,32 +189,32 @@ describe('Stateless data import', () => {
             columnSeparator: ',',
             lineSeparator: '\n',
             skipFirstDataRow: false,
-            firstRowAsHeader: true,
-          },
-        },
-      };
+            firstRowAsHeader: true
+          }
+        }
+      }
       const response = await request(ADAPTER_URL)
         .post('/preview')
-        .send(reqBody);
-      expect(response.status).toEqual(200);
-      const importedData = response.body.data;
+        .send(reqBody)
+      expect(response.status).toEqual(200)
+      const importedData = response.body.data
       const expected = [
         {
           col1: 'val11',
           col2: 'val12',
-          col3: 'val13',
+          col3: 'val13'
         },
         {
           col1: 'val21',
           col2: 'val22',
-          col3: 'val23',
-        },
-      ];
+          col3: 'val23'
+        }
+      ]
 
-      expect(JSON.parse(importedData)).toEqual(expected);
+      expect(JSON.parse(importedData)).toEqual(expected)
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should return 400 BAD_REQUEST for unsupported protocol [POST /preview]',
@@ -224,20 +224,20 @@ describe('Stateless data import', () => {
           type: 'UNSUPPORTED',
           parameters: {
             location: MOCK_SERVER_URL + '/json',
-            encoding: 'UTF-8',
-          },
+            encoding: 'UTF-8'
+          }
         },
         format: {
-          type: 'JSON',
-        },
-      };
+          type: 'JSON'
+        }
+      }
       const response = await request(ADAPTER_URL)
         .post('/preview')
-        .send(reqBody);
-      expect(response.status).toEqual(400);
+        .send(reqBody)
+      expect(response.status).toEqual(400)
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should return 400 BAD_REQUEST for unsupported format [POST /preview]',
@@ -247,20 +247,20 @@ describe('Stateless data import', () => {
           type: 'HTTP',
           parameters: {
             location: MOCK_SERVER_URL + '/json',
-            encoding: 'UTF-8',
-          },
+            encoding: 'UTF-8'
+          }
         },
         format: {
-          type: 'UNSUPPORTED',
-        },
-      };
+          type: 'UNSUPPORTED'
+        }
+      }
       const response = await request(ADAPTER_URL)
         .post('/preview')
-        .send(reqBody);
-      expect(response.status).toEqual(400);
+        .send(reqBody)
+      expect(response.status).toEqual(400)
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should return 400 BAD_REQUEST for invalid location [POST /preview]',
@@ -270,20 +270,20 @@ describe('Stateless data import', () => {
           type: 'HTTP',
           parameters: {
             location: 'invalid-location',
-            encoding: 'UTF-8',
-          },
+            encoding: 'UTF-8'
+          }
         },
         format: {
-          type: 'JSON',
-        },
-      };
+          type: 'JSON'
+        }
+      }
       const response = await request(ADAPTER_URL)
         .post('/preview')
-        .send(reqBody);
-      expect(response.status).toEqual(400);
+        .send(reqBody)
+      expect(response.status).toEqual(400)
     },
-    TIMEOUT,
-  );
+    TIMEOUT
+  )
 
   test(
     'Should return 500 INTERNAL_SERVER_ERROR for data not found [POST /preview]',
@@ -293,18 +293,18 @@ describe('Stateless data import', () => {
           type: 'HTTP',
           parameters: {
             location: MOCK_SERVER_URL + '/not-found',
-            encoding: 'UTF-8',
-          },
+            encoding: 'UTF-8'
+          }
         },
         format: {
-          type: 'JSON',
-        },
-      };
+          type: 'JSON'
+        }
+      }
       const response = await request(ADAPTER_URL)
         .post('/preview')
-        .send(reqBody);
-      expect(response.status).toEqual(500);
+        .send(reqBody)
+      expect(response.status).toEqual(500)
     },
-    TIMEOUT,
-  );
-});
+    TIMEOUT
+  )
+})

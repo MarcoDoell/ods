@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "experimentalDecorators": false,
-    "target": "es2020",
+    "target": "es2019",
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
@@ -9,10 +9,8 @@
     "sourceMap": true,
     "allowJs": true,
     "baseUrl": ".",
-    "lib": ["es2020"],
+    "lib": ["es2019"],
     "outDir": "dist"
   },
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

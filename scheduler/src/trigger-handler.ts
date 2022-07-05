@@ -13,7 +13,7 @@ export async function triggerDatasource(
         async (client) =>
           await EventPublisher.publishDatasourceTrigger(client, datasourceId),
       );
-      console.log(`Datasource ${datasourceId} triggered.`);
+      //console.log(`Datasource ${datasourceId} triggered.`);
       break;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

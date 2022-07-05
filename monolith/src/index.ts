@@ -10,7 +10,7 @@ import { createDataSourceAmqpConsumer } from '../../adapter/src/datasource/api/a
 import { DataImportEndpoint } from '../../adapter/src/datasource/api/rest/dataImportEndpoint';
 import { DataSourceEndpoint } from '../../adapter/src/datasource/api/rest/dataSourceEndpoint';
 import { initDatasourceDatabases } from '../../adapter/src/datasource/repository/datasourceDatabase';
-import { AMQP_URL, CONNECTION_BACKOFF, CONNECTION_RETRIES } from '../../adapter/src/env';
+import { AMQP_URL, CONNECTION_BACKOFF } from '../../adapter/src/env';
 import {initNotificationRepository} from "../../notification/src/notification-config/postgresNotificationRepository";
 import VM2SandboxExecutor from "../../notification/src/notification-execution/condition-evaluation/vm2SandboxExecutor";
 import NotificationExecutor from "../../notification/src/notification-execution/notificationExecutor";
@@ -31,18 +31,42 @@ import Scheduler from "../../scheduler/src/scheduling";
 import {CONNECTION_BACKOFF_IN_MS, MAX_TRIGGER_RETRIES} from "../../scheduler/src/env";
 import {DatasourceConfigConsumer} from "../../scheduler/src/api/amqp/datasourceConfigConsumer";
 import {setupInitialStateWithRetry} from "../../scheduler/src/initializer";
+import { PostgresStorageContentRepository } from '../../storage/storage-mq/src/storage-content/postgresStorageContentRepository';
+import { PostgresStorageStructureRepository } from '../../storage/storage-mq/src/storage-structure/postgresStorageStructureRepository';
+import { createPipelineConfigEventConsumer } from '../../storage/storage-mq/src/api/amqp/pipelineConfigConsumer';
+import { createPipelineExecutionEventConsumer } from '../../storage/storage-mq/src/api/amqp/pipelineExecutionConsumer';
+import { PipelineConfigEventHandler } from '../../storage/storage-mq/src/api/pipelineConfigEventHandler';
+import { PipelineExecutionEventHandler } from '../../storage/storage-mq/src/api/pipelineExecutionEventHandler';
+import { StorageContentEndpoint } from '../../storage/storage-mq/src/api/rest/storageContentEndpoint';
+import { PostgresClient } from '@jvalue/node-dry-pg';
+import { PoolConfig } from 'pg';
+import { Console } from 'console';
+import { getSystemErrorName } from 'util';
+
 export const port = 8080;
 export let server: Server | undefined;
 let scheduler: Scheduler | undefined;
 async function main(): Promise<void> {
   const notificationRepository = await initNotificationRepository(
-    CONNECTION_RETRIES,
+    30,
     CONNECTION_BACKOFF,
   );
   const postgresClient = await initDatabase(
-    CONNECTION_RETRIES,
+    30,
     CONNECTION_BACKOFF,
   );
+  // Pool Config Storage Service
+  const POOL_CONFIG: PoolConfig = {
+    host: "storage-db",
+    port: 5435,
+    user: "storagemq",
+    password: "storagemq-pw",
+    database: "ods",
+    ssl: false,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+  };
   const sandboxExecutor = new VM2SandboxExecutor();
   const sandboxExecutor2 = new SecondVM2SandboxExecutor();
   const validator = new JsonSchemaValidator();
@@ -76,9 +100,29 @@ async function main(): Promise<void> {
   const pipelineTransformedDataEndpoint = new PipelineTranformedDataEndpoint(
     pipelineTransformedDataManager,
   );
+
+  const postgresClient2 = new PostgresClient(POOL_CONFIG);
+
+  const storageContentRepository = new PostgresStorageContentRepository(
+    postgresClient2,
+  );
+  const storageStructureRepository = new PostgresStorageStructureRepository(
+    postgresClient2,
+  );
+  console.log("Cont" + storageContentRepository)
+  console.log("Struc" + storageStructureRepository)
+  
+  const pipelineConfigEventHandler = new PipelineConfigEventHandler(
+    storageStructureRepository,
+  );
+  const pipelineExecutionEventHandler = new PipelineExecutionEventHandler(
+    storageContentRepository,
+  );
+
+
   const amqpConnection = new AmqpConnection(
     AMQP_URL,
-    CONNECTION_RETRIES,
+    30,
     CONNECTION_BACKOFF,
     onAmqpConnectionLoss,
     // "amqp://rabbit_adm:R4bb!7_4DM_p4SS@localhost:5672",
@@ -96,7 +140,7 @@ async function main(): Promise<void> {
 
   await setupInitialStateWithRetry(
     scheduler,
-    CONNECTION_RETRIES,
+    30,
     CONNECTION_BACKOFF_IN_MS,
   );
 
@@ -113,6 +157,21 @@ async function main(): Promise<void> {
   pipelineConfigEndpoint.registerRoutes(app);
   pipelineTransformedDataEndpoint.registerRoutes(app);
 
+  await createPipelineConfigEventConsumer(
+      amqpConnection,
+      pipelineConfigEventHandler,
+  )
+
+  await createPipelineExecutionEventConsumer(
+      amqpConnection,
+      pipelineExecutionEventHandler,
+  )
+
+  const storageContentEndpoint = new StorageContentEndpoint(
+    storageContentRepository,
+  );
+  storageContentEndpoint.registerRoutes(app);
+
   app.get('/version', (req: express.Request, res: express.Response): void => {
     res.header('Content-Type', 'text/plain');
     res.send(notificationExecutor.getVersion());
@@ -127,7 +186,7 @@ async function main(): Promise<void> {
 
 
 
-  await initDatasourceDatabases(CONNECTION_RETRIES, CONNECTION_BACKOFF);
+  await initDatasourceDatabases(30, CONNECTION_BACKOFF);
 
 
   await createDataSourceAmqpConsumer(amqpConnection);

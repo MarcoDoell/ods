@@ -6,7 +6,7 @@
     "mockServer": "node src/mock.server.js",
     "test": "jest src/*.test.js --colors --verbose --runInBand",
     "lint": "eslint src --fix",
-    "lint-ci": "eslint src --max-warnings=0"
+    "lint-ci": "eslint src --max-warnings=0",
   },
   "dependencies": {
     "jest": "^27.0.6",

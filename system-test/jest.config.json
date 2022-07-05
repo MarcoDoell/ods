@@ -1,5 +1,8 @@
 {
   "name": "ODS SystemTests",
   "globalSetup": "<rootDir>/src/setup.js",
-  "globalTeardown": "<rootDir>/src/teardown.js"
+  "globalTeardown": "<rootDir>/src/teardown.js",
+  "testMatch": [
+    "<rootDir>/src/*.test.js"
+  ]
 }

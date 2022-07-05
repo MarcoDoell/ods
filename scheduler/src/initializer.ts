@@ -9,7 +9,7 @@ export async function setupInitialStateWithRetry(
 ): Promise<void> {
   for (let i = 1; i <= retries; i++) {
     try {
-      await setupInitialState(scheduler);
+      //await setupInitialState(scheduler);
       return;
     } catch (e) {
       const error = e as { code: string | number };
