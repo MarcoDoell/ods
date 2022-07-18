@@ -14,11 +14,11 @@ import { createDatasourceTable } from './datasourceRepository';
 import { createOutboxTable } from './outboxRepository';
 
 const POOL_CONFIG: PoolConfig = {
-  host: POSTGRES_HOST,
-  port: POSTGRES_PORT as unknown as number,
-  user: POSTGRES_USER,
-  password: POSTGRES_PW,
-  database: POSTGRES_DB,
+  host: "localhost",
+  port: 5432 as number,
+  user: "adapterservice",
+  password: "admin",
+  database: "adapterservice",
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
