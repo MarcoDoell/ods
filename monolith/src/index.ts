@@ -26,7 +26,7 @@ import {PipelineConfigManager} from "../../pipeline/src/pipeline-config/pipeline
 import {PipelineTransformedDataManager} from "../../pipeline/src/pipeline-config/pipelineTransformedDataManager";
 import {init as initDatabase} from "../../pipeline/src/pipeline-config/pipelineDatabase";
 import JsonSchemaValidator from "../../pipeline/src/pipeline-validator/jsonSchemaValidator";
-import SecondVM2SandboxExecutor  from "../../pipeline/src/pipeline-execution/sandbox/SecondVM2SandboxExecutor";
+import SecondVM2SandboxExecutor  from "../../pipeline/src/pipeline-execution/sandbox/secondVM2SandboxExecutor";
 import Scheduler from "../../scheduler/src/scheduling";
 import {CONNECTION_BACKOFF_IN_MS, MAX_TRIGGER_RETRIES} from "../../scheduler/src/env";
 import {DatasourceConfigConsumer} from "../../scheduler/src/api/amqp/datasourceConfigConsumer";
