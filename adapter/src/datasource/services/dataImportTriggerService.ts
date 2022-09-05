@@ -53,7 +53,7 @@ export class DataImportTriggerService {
     returnDataImportResponse: DataImportResponse,
   ): Promise<any> {
     const insertStatement: DataImportInsertStatement = {
-      data: returnDataImportResponse.data,
+      data: returnDataImportResponse.data, // .toString().replace('\',"\\"),
       error_messages: [],
       health: 'OK',
       timestamp: new Date(Date.now()).toLocaleString(),

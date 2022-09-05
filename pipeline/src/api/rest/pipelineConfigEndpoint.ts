@@ -10,12 +10,12 @@ export class PipelineConfigEndpoint {
   constructor(private readonly pipelineConfigManager: PipelineConfigManager) {}
 
   registerRoutes = (app: express.Application): void => {
-    app.get('/configs', asyncHandler(this.getAll));
-    app.get('/configs/:id', asyncHandler(this.getOne));
-    app.post('/configs', asyncHandler(this.create));
-    app.put('/configs/:id', asyncHandler(this.update));
-    app.delete('/configs/:id', asyncHandler(this.delete));
-    app.delete('/configs', asyncHandler(this.deleteAll));
+    app.get('/pipelineconfigs', asyncHandler(this.getAll));
+    app.get('/pipelineconfigs/:id', asyncHandler(this.getOne));
+    app.post('/pipelineconfigs', asyncHandler(this.create));
+    app.put('/pipelineconfigs/:id', asyncHandler(this.update));
+    app.delete('/pipelineconfigs/:id', asyncHandler(this.delete));
+    app.delete('/pipelineconfigs', asyncHandler(this.deleteAll));
   };
 
   // The following methods need arrow syntax because of javascript 'this' shenanigans
