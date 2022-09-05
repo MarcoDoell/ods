@@ -57,10 +57,10 @@ async function main(): Promise<void> {
   );
   // Pool Config Storage Service
   const POOL_CONFIG: PoolConfig = {
-    host: "storage-db",
-    port: 5435,
-    user: "storagemq",
-    password: "storagemq-pw",
+    host: "localhost",
+    port: 5436,
+    user: "ods_admin",
+    password: "ods_pw",
     database: "ods",
     ssl: false,
     max: 20,
